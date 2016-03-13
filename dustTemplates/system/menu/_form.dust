@@ -1,0 +1,56 @@
+	<form class="form-horizontal" method="post" id="addMenuForm" role="form">
+		<input type="hidden" name="_csrf" value="{_csrf}" />
+		<div class="form-group">
+			<label for="menuName" class="col-sm-1 control-label">菜单名<span class="required-indicator">*</span></label>
+			<div class="col-sm-1">
+				<input type="text" name="menu[name]" class="form-control" id="menuName" value="{menu.name}" required>
+			</div>
+			<label for="menuSortKey" class="col-sm-1 control-label">排序因子<span class="required-indicator">*</span></label>
+			<div class="col-sm-1">
+				<input type="number" name="menu[sortKey]" value="{menu.sortKey}"  class="form-control" id="menuSortKey" required>
+			    <p class="help-block">数字越小位置越靠前</p>
+			</div>
+			<label for="menuURL" class="col-sm-1 control-label">菜单链接<span class="required-indicator">*</span></label>
+			<div class="col-sm-1">
+				{?edit}
+				<p class="form-control">{menu.url}</p>
+                <input type="hidden" id="menuURL" name="menu[url]" value="{menu.url}" required>
+				{:else}
+				<input type="text" name="menu[url]" value="{menu.url}"  class="form-control" id="menuURL" required>
+				{/edit}
+			    <p class="help-block">如：/system、/policy</p>
+			</div>
+			{?clients}
+            <label for="menuApplication" class="col-sm-1 control-label">所属应用<span class="required-indicator">*</span></label>
+            <div class="col-sm-1">
+               	<select class="form-control" name="menu[application]">
+               		{#clients}
+               			<option value="{.clientID}" {@eq key=clientID value="{menu.application}" }  selected="true"{/eq} >{.name}</option>
+               		{/clients}
+               	</select>
+            </div>
+			{/clients}
+            <label for="menuLevel" class="col-sm-1 control-label">菜单级别<span class="required-indicator">*</span></label>
+            <div class="col-sm-1">
+               	<p class="form-control">{@baseCode code="{menu.levelId}"  base="menuLevel" /}</p>
+                <input type="hidden" id="menuLevel" name="menu[levelId]" value="{menu.levelId}" required>
+            </div>
+			<label for="parentURL" class="col-sm-1 control-label">上级菜单<span class="required-indicator">*</span></label>
+			<div class="col-sm-1">
+				<p class="form-control">{parent.fullUrl}</p>
+				<input name="parent[fullUrl]" type="hidden"  id="parentURL" value="{parent.fullUrl}" required>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-12">
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-primary">提交</button>
+					</div>
+					<div class="btn-group">
+						<a id="returnButton" class="btn btn-default">返回</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>

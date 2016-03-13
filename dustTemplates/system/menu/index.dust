@@ -1,0 +1,153 @@
+<div class="panel-group" id="mainContent">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group">
+                <a data-toggle="collapse" class="btn btn-default" data-toggle="collapse" data-parent="#mainContent" href="#condition">查询条件</a>
+                <a class="btn btn-default" href="/system/menus/add">新增一级菜单</a>
+            </div>
+        </div>
+        <div id="condition" class="panel-collapse collapse">
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">所属应用</label>
+                        <select class="form-control"  name="application">
+                            <option></option>
+                            {#clients}
+                            <option value="{.clientID}"  >{.name}</option>
+                            {/clients}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-default">查询</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">查询结果</div>
+        <table class="table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th class="col-sm-2">菜单名</th>
+                    <th class="col-sm-2">菜单链接</th>
+                    <th class="col-sm-2">级别</th>
+                    <th class="col-sm-2">所属应用</th>
+                    <th class="col-sm-2">排序因子</th>
+                    <th class="col-sm-2">操作选项</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#menus}
+                <tr>
+                    <td class="col-sm-2">
+                        {@select key=parentUrl}
+                        {@ne value="/"}
+                        <a data-toggle="tooltip" data-placement="top" title="显示上层菜单"   href="/system/menus/{parentId}/up" ><i class="icon-angle-left icon-large"></i></a>
+                        {/ne}
+                        {/select}
+                        {.name}
+                        {@select key=subs.count}
+                        {@gt value=0}
+                        <a  data-toggle="tooltip" data-placement="top" title="显示下级菜单"  href="/system/menus/{_id}/down"><i class="icon-angle-right icon-large"></i></a>
+                        {/gt}
+                        {/select}
+                    </td>
+                    <td class="col-sm-2">{.fullUrl}</td>
+                    <td class="col-sm-2">{@baseCode code="{levelId}" base="menuLevel"/}</td>
+                    <td class="col-sm-2">
+                        {?.application}
+                        {.application}
+                        {:else}
+                        由上级确定
+                        {/.application}
+
+                    </td>
+                    <td class="col-sm-2">
+                        {.sortKey}
+                    </td>
+                    <td class="col-sm-2">
+                        {?isAdmin}
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-default" data-toggle="tooltip" data-placement="left" title="编辑" href="/system/menus/{._id}/edit"><i class="icon-edit icon-large"></i></a>
+                            <a class="btn btn-default {@select key=levelId}{@gte value=3}disabled{/gte}{/select}"  href="/system/menus/{._id}/addSub" data-toggle="tooltip" data-placement="top" title="新增下级"><i class="icon-plus icon-large"></i></a>
+                            {@eq key="{.levelId}" value="1"}
+                            <a class="btn btn-default" data-toggle="tooltip" name="deleteBtn" value="{._id}" data-placement="right" title="删除" href="#"><i class="icon-remove icon-large"></i></a>
+                            {/eq}
+                        </div>
+                        {:else}
+                        <a class="btn btn-default btn-xs disabled" href="#">修改</a>
+                        <a class="btn btn-default btn-xs disabled" href="#">删除</a>
+                        {/isAdmin}
+                    </td>
+                </tr>
+                <input type="hidden" value="{parentId}" name="showNextMenuId"/>
+                {/menus}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container-fluid">
+    <ul class="pagination"></ul>
+</div>
+<script type="text/javascript">
+
+    $(function() {
+    var options = {
+        currentPage: {page},
+        bootstrapMajorVersion : 3,
+        totalPages: {pageCount},
+        pageUrl : function(type, page, current){
+            if (window.location.href.indexOf('down') >= 0) {
+                var showNextMenuId=$("input[name='showNextMenuId']").val();
+                return '/system/menus/'+showNextMenuId+'/down?page='+page;
+            }else{
+                return '/system/menus?page='+page;
+            }
+        },
+        itemContainerClass: function (type, page, current) {
+            return (page === current) ? "disabled" : "pointer-cursor";
+        },
+        itemTexts: function (type, page, current) {
+            switch (type) {
+                case "first":
+                    return "<<";
+                case "prev":
+                    return "<";
+                case "next":
+                    return ">";
+                case "last":
+                    return ">>";
+                case "page":
+                    return page;
+            }
+        }
+    };
+        $('.pagination').bootstrapPaginator(options);
+
+        $("a[name='deleteBtn']").click(function() {
+            var id = $(this).attr('value');
+            bootbox.confirm("确定删除？", function(result) {
+                if (result) {
+                    $.get("/system/menus/" + id + "/delete?" + new Date().getTime(), function(data, status) {
+                        if (status === 'success') {
+                            var some_html = '<br><div class="alert alert-success fade in">';
+                            some_html += '<label>成功删除</label>';
+                            some_html += '</div>';
+                            var box = bootbox.alert(some_html);
+                            box.on('hidden.bs.modal', function(e) {
+                                renderCurrent(function(data, out) {
+                                    $("#main").html(out);
+                                });
+                            });
+                        } else {
+                            var some_html = '<br><div class="alert alert-danger fade in">';
+                            some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                            some_html += '</div>';
+                            bootbox.alert(some_html);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

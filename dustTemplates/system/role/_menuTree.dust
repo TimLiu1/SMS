@@ -1,0 +1,53 @@
+<div id="menuTreeDiv">
+
+</div>
+<!-- <div class="tree">
+    <ul>
+        {#menuTree}
+        {?.subs}
+            <li>
+                {?select}
+                    {?.selected}
+                    <input type="checkbox" value="{.menu._id}" checked><span class="active">
+                    {:else}
+                    <input type="checkbox" value="{.menu._id}"><span>
+                    {/.selected}
+                    <i class="glyphicon glyphicon-folder-open"></i>{.menu.name}</span>
+                {:else}
+                    <span><i class="glyphicon glyphicon-folder-open"></i>{.menu.name}</span>
+                {/select}
+                <ul>
+                {#.subs}
+                    {?.subs}
+                    <li>
+                        <span><i class="glyphicon glyphicon-minus-sign"></i>{.menu.name}</span>
+                        <ul>
+                            {#.subs}
+                            <li><span><i class="glyphicon glyphicon-leaf"></i>{.menu.name}</span></li>
+                            {/.subs}
+                        </ul>
+                    </li>
+                    {:else}
+                    <li><span><i class="glyphicon glyphicon-leaf"></i>{.menu.name}</span></li>
+                    {/.subs}
+                {/.subs}
+                </ul>
+            </li>
+        {:else}
+            <li>
+            {?select}
+                {?.selected}
+                <input type="checkbox" value="{.menu._id}" checked><span class="active">
+                {:else}
+                <input type="checkbox" value="{.menu._id}"><span>
+                {/.selected}
+                <i class="glyphicon glyphicon-leaf"></i>{.menu.name}</span>
+            {:else}
+                <span><i class="glyphicon glyphicon-leaf"></i>{.menu.name}</span>
+            {/select}
+            </li>
+        {/.subs}
+        {/menuTree}
+    </ul>
+</div> -->
+

@@ -1,0 +1,172 @@
+<div class="panel-group" id="mainContent">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group">
+                <a data-toggle="collapse" class="btn btn-default" data-toggle="collapse" data-parent="#mainContent" href="#condition">查询条件</a>
+                <a class="btn btn-default" id="addNewBtn" href="#" data-toggle="modal" data-target="#addModel">增加角色</a>
+            </div>
+        </div>
+        <div id="condition" class="panel-collapse collapse">
+            <div class="panel-body">
+                <form class="form-inline" role="form" action="/system/auth/roles/query" method="post">
+                    <div class="form-group">
+                        <label class="sr-only" for="roleName">角色名</label>
+                        <input type="text" class="form-control" id="roleName" name="condition[name]" value="{condition.name}" placeholder="角色名">
+                    </div>
+                        <button class="btn btn-default" type="submit">查询</button>
+                        <input type="hidden" name="_csrf" value="{_csrf}" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">查询结果</div>
+        <table class="table table-hover table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th class="col-sm-3">名称</th>
+                    <th class="col-sm-3">代码</th>
+                    <th class="col-sm-3">状态</th>
+                    <th class="col-sm-3">操作选项</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#roles}
+                <tr>
+                    <td class="col-sm-3">{.name}</td>
+                    <td class="col-sm-2">{.code}</td>
+                    <td class="col-sm-3">{@baseCode code="{.isValid}" base="valid"/}</td>
+                    <td class="col-sm-3">
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-default" data-toggle="tooltip"  value="{._id}" data-placement="left" name="editBtn" title="编辑" href="#"><i class="icon-edit icon-large"></i></a>
+                            <a class="btn btn-default" href="#" value="{._id}" data-toggle="tooltip" data-placement="top" name="deleteBtn" title="删除"><i class="icon-remove icon-large"></i></a>
+                            <a class="btn btn-default" href="/system/auth/roles/{._id}/addMenus" data-toggle="tooltip" data-placement="right" title="分配菜单"><i class="icon-ok icon-large"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {/roles}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container-fluid">
+    <ul class="pagination"></ul>
+</div>
+<div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">增加角色</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="submitBtn" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+    $("#submitBtn").click(function() {
+        $("#roleForm").submit();
+    });
+    $("#addNewBtn").click(function() {
+        var formData = {
+            '_csrf': '{_csrf}'
+        };
+        dust.render('system.role.roleForm', formData, function(err, out) {
+            $("div.modal-body").html(out);
+            $("#roleForm").validate({
+                submitHandler: function(form) {
+                    $(":button").attr("disabled", "true");
+                    submitForm(form, '/system/auth/roles/add', function(data){
+                        $('.modal').modal('hide');
+                        $('.modal-backdrop').remove();
+                    });
+                },
+                focusCleanup: true
+            });
+        });
+    });
+    $("a[name='editBtn']").click(function() {
+        var id = $(this).attr('value');
+        var formData = {
+            '_csrf': '{_csrf}'
+        };
+        $.get("/system/auth/roles/" + id + "/load?" + new Date().getTime(), function(data, status, xhr) {
+            if (status === 'success') {
+                formData.role = data;
+                dust.render('system.role.roleForm', formData, function(err, out) {
+                    $("div.modal-body").html(out);
+                    $("#roleForm").validate({
+                        submitHandler: function(form) {
+                            $(":button").attr("disabled", "true");
+                            submitForm(form, '/system/auth/roles/' + id + '/save', function(data) {
+                                $('.modal').modal('hide');
+                                $('.modal-backdrop').remove();
+                            })
+                        },
+                        focusCleanup: true
+                    });
+                    $("#addModel").modal('show');
+                });
+            } else {
+                var some_html = '<br><div class="alert alert-danger fade in">';
+                some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                some_html += '</div>';
+                bootbox.alert(some_html);
+            }
+        });
+    });
+    $("a[name='deleteBtn']").click(function() {
+        var id = $(this).attr('value');
+        $.get("/system/auth/roles/" + id + "/delete?" + new Date().getTime(), function(data, status) {
+            if (status === 'success') {
+                var some_html = '<br><div class="alert alert-success fade in">';
+                some_html += '<label>成功删除</label>';
+                some_html += '</div>';
+                var box = bootbox.alert(some_html);
+                box.on('hidden.bs.modal', function(e) {
+                    renderCurrent();
+                });
+            } else {
+                var some_html = '<br><div class="alert alert-danger fade in">';
+                some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                some_html += '</div>';
+                bootbox.alert(some_html);
+            }
+        });
+    });
+    var options = {
+        currentPage: {page},
+        bootstrapMajorVersion: 3,
+        totalPages: {pageCount},
+        pageUrl: function(type, page, current) {
+            return '/system/auth/roles?page=' + page;
+        },
+        itemContainerClass: function(type, page, current) {
+            return (page === current) ? "disabled" : "pointer-cursor";
+        },
+        itemTexts: function(type, page, current) {
+            switch (type) {
+                case "first":
+                    return "<<";
+                case "prev":
+                    return "<";
+                case "next":
+                    return ">";
+                case "last":
+                    return ">>";
+                case "page":
+                    return page;
+            }
+        }
+    };
+    $('.pagination').bootstrapPaginator(options);
+});
+
+</script>

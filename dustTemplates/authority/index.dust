@@ -1,0 +1,23 @@
+<div style="width: 1000px; margin: 30px auto">
+    <table class=" table " cellspacing="0" cellpadding="0"  id="taskTable">
+        <thead>
+        <tr style="height: 20px">
+            <th > 权限名称</th>
+            <th >权限类型</th>
+            <th >简介</th>
+            <th >操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {#items}
+
+        <tr   class="success" >
+            <td >{.authName}</td>
+            <td >{.authType}</td>
+            <td >{.authIntro}</td>
+            <td > <a class="btn " data-toggle="tooltip"  value="{._id}" data-placement="left" name="editBtn" title="修改" href="#">申请</a></td>
+       </tr>
+        {/items}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,218 @@
+
+<div class="panel panel-primary" id="searchPolicyPanel">
+    <div class="panel-heading">查询条件</div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form" id="queryPolicyForm" method="POST" action="/reportPolicy/report/day">
+            <div class="panel-group" id="mainContent">
+                <div class="panel panel-default">
+                    <div>
+                        <div class="panel-body">
+
+
+                            <div class="col-sm-2 col-sm-offset" >
+                                <div class="form-group">
+                                    <!-- Select Basic -->
+                                    <label class="col-sm-4 control-label">校区</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="campus">
+
+                                            <option>{.campus}</option>
+                                            <option></option>
+                                            <option>宝山校区</option>
+                                            <option>延长校区</option>
+                                            <option>嘉定校区</option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-2 col-sm-offset" >
+                                <div class="form-group">
+                                    <!-- Select Basic -->
+                                    <label class="col-sm-4 control-label">类型</label>
+                                    <div class="col-sm-8">
+                                        <td> <input id="act_type" class="form-control "  name="party[effectiveStartDate]"   type="text" value='{.act_type}'></td>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-sm-offset" >
+                                <div class="form-group">
+                                    <!-- Select Basic -->
+                                    <label class="col-sm-4 control-label">容量</label>
+
+                                    <div class="col-sm-6">
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td> <input id="min" class="form-control "  type="text" ></td>
+                                                <td>至</td>
+                                                <td><td> <input id="max" class="form-control "    type="text" ></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-4 col-sm-offset">
+                                <div class="form-group">
+                                    <!-- Select Basic -->
+                                    <label class="col-sm-4 control-label">预定日期</label>
+
+                                    <div class="col-sm-5">
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td> <input id="start" class="form-control date datepicker"  name="party[effectiveStartDate]"   type="text" value='{.start}'></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-sm-4 col-sm-offset">
+                                <div class="form-group">
+                                    <!-- Select Basic -->
+                                    <label class="col-sm-4 control-label">时间段选择</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" id="set_time">
+                                            <option>{.set_time}</option>
+                                            <option>8:00-10:00</option>
+                                            <option>10:00-12:00</option>
+                                            <option>12:00-14:00</option>
+                                            <option>14:00-16:00</option>
+                                            <option>16:00-18:00</option>
+                                            <option>18:00-20:00</option>
+                                            <option>20:00-22:00</option>
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <button type="button" id="searchBtn" class="btn btn-primary" >查&nbsp;&nbsp;&nbsp;&nbsp;询</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="" id="tempA" hidden="true"></a>
+
+
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">查询结果</div>
+                        <table class="table table-striped table-bordered dataTable no-footer" cellspacing="0" cellpadding="0"  id="taskTable">
+                            <thead>
+                            <tr>
+                                <th class="col-sm-1">校区</th>
+                                <th class="col-sm-1">类型</th>
+                                <th class="col-sm-1">地点</th>
+                                <th class="col-sm-1">容量</th>
+                                <th class="col-sm-1">状态</th>
+                                <th class="col-sm-1">时间</th>
+
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {#item}
+                            <tr>
+                                <td>{.campus}</td>
+                                <td>{.act_type}</td>
+                                <td>{.act_room}</td>
+                                <td>{.content}</td>
+                                <td>{.status}</td>
+                                <td>{.time}</td>
+                            </tr>
+                            {/item}
+
+
+                            </tbody>
+                        </table>
+
+                        <div class="container-fluid">
+                            <ul class="pagination"></ul>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+<script>
+
+    $(function() {
+        var datepickerOption = {
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            language: 'zh-CN',
+            todayHighlight: true,
+        };
+        $('.datepicker').datepicker(datepickerOption);
+
+
+        var options = {
+            currentPage: {page},
+            bootstrapMajorVersion: 3,
+            totalPages: {pageCount},
+            pageUrl: function (type, page, current) {
+                var campus = $("#campus").val();
+                var act_type = $("#act_type").val();
+                var min = $("#min").val();
+                var max = $("#max").val();
+                var set_time = $("#set_time").val();
+                var start = $("#start").val();
+
+                return '/search/index?page=' + page + '&campus=' + campus +
+                    '&set_time=' + set_time+ '&start=' + start+ '&act_type=' +
+                    act_type+ '&min=' + min+ '&max=' + max;
+            },
+            itemContainerClass: function (type, page, current) {
+                return (page === current) ? "disabled" : "pointer-cursor";
+            },
+            itemTexts: function (type, page, current) {
+                switch (type) {
+                    case "first":
+                        return "首页";
+                    case "prev":
+                        return "上一页";
+                    case "next":
+                        return "下一页";
+                    case "last":
+                        return "尾页";
+                    case "page":
+                        return page;
+                }
+            }
+        };
+        $('.pagination').bootstrapPaginator(options);
+
+        $("#searchBtn").click(function () {
+            var campus = $("#campus").val();
+            var start = $("#start").val();
+            var act_type = $("#act_type").val();
+            var set_time = $("#set_time").val();
+            var min = $("#min").val();
+            var max = $("#max").val();
+            if(!start && set_time){
+                alert("一个日期输入，另一个日期必须输入");
+            }
+            if(start && !set_time){
+                alert("一个日期输入，另一个日期必须输入");
+            }
+            $("#tempA").attr("href", "/search/index?campus=" + campus+"&set_time=" + set_time+"&start=" + start+"&act_type=" + act_type+"&min=" + min+"&max=" + max);
+            $("#tempA").click();
+        });
+
+
+    })
+</script>

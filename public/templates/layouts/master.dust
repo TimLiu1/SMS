@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="ie6" lang="zh"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie7" lang="zh"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie8" lang="zh"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9" lang="zh"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="" lang="zh"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>校园设施预定系统</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/validator.css" rel="stylesheet">
+    <link href="/css/bootstrap-tree.css" rel="stylesheet">
+    <link href="/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/css/datepicker.min.css" rel="stylesheet">
+    <style type="text/css">
+        /* Lastly, apply responsive CSS fixes as necessary */
+        @media (max-width: 767px) {
+            #footer {
+                margin-left: -10px;
+                margin-right: -10px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+        body .modal-large {
+            /* new custom width */
+            width: 80%;
+        }
+
+        body .modal-middle {
+            /* new custom width */
+            width: 60%;
+        }
+
+        body .modal-center {
+            margin: 0;
+            top: 50%;
+        }
+        @-ms-viewport {
+            width: device-width;
+        }
+
+        body {
+            padding-top: 52px;
+            padding-bottom: 20px;
+
+        }
+        .datepicker{z-index:1151 !important;}
+        .required-indicator {font-weight:bolder;color:#ED1C24;}
+    </style>
+</head>
+<body>
+<div id="container" class="container-fluid">
+    {+body}
+        body content
+    {/body}
+</div>
+<script type="text/javascript">
+    var user = JSON.parse('{logedInUser|s|js}');
+</script>
+<script data-main="/js/main" src="/components/requirejs/require.js"></script>
+</body>
+</html>

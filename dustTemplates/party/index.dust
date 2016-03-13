@@ -1,0 +1,225 @@
+<div class="panel-group" id="mainContent">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group">
+                <a data-toggle="collapse" class="btn btn-default" data-toggle="collapse" data-parent="#mainContent" href="#condition">查询条件</a>
+                <a class="btn btn-default" id="addNewBtn" href="#" data-toggle="modal" data-target="#addModel">增加第三方</a>
+            </div>
+        </div>
+        <div id="condition" class="panel-collapse collapse">
+            <div class="panel-body">
+                <form class="form-inline" role="form" id="queryForm" method="post">
+                    <div class="form-group">
+                        <label class="sr-only" for="name">名称</label>
+                        <input type="text" class="form-control" id="name" name="condition[name]" value="{condition.name}" placeholder="名称">
+                        <label class="sr-only" for="branch">所属机构</label>
+                        <input type="text" class="form-control" id="branch" name="condition[branch]" value="{condition.branch}" placeholder="所属机构">
+                    </div>
+                    <button class="btn btn-default" type="button" id="queryBtn">查询</button>
+                    <a href="" id="tempA" hidden="true"></a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">查询结果</div>
+        <table class="table table-hover table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th class="col-sm-2">名称</th>
+                    <th class="col-sm-1">代码</th>
+                    <th class="col-sm-2">有效起止日期</th>
+                    <th class="col-sm-1">所属机构</th>
+                    <th class="col-sm-2">业务员</th>
+                    <th class="col-sm-2">中介/代理</th>
+                    <th class="col-sm-2">操作选项</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#items}
+                <tr>
+                    <td>{.name}</td>
+                    <td>{.code}</td>
+                    <td>{@formatDate date="{.effectiveStartDate}" format="YYYY-MM-DD"/} - {@formatDate date="{.effectiveEndDate}" format="YYYY-MM-DD"/}</td>
+                    <td>{.branch}</td>
+                    <td>{.agent}</td>
+                    <td>{.insuranceAgency}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-default" data-toggle="tooltip"  value="{._id}" data-placement="left" name="editBtn" title="维护明细" href="#"><i class="icon-edit icon-large"></i></a>
+                            {@security allowed="ROLE_ADMIN" roles="{user.roles}"}<a class="btn btn-default" href="#" value="{._id}" data-toggle="tooltip" data-placement="top" name="deleteBtn" title="删除"><i class="icon-remove icon-large"></i></a>{/security}
+                        </div>
+                    </td>
+                </tr>
+                {/items}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container-fluid">
+    <ul class="pagination"></ul>
+</div>
+<div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-large">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">增加新第三方</h4>
+            </div>
+            <div class="modal-body" id="formDiv">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="submitBtn" class="btn btn-primary">提交</button>
+                <div id="detailDiv"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+var partyObj = {
+    renderDetail: function(id, formData) {
+        dust.render('party.detail', formData, function(err, out) {
+            $(":button").attr("disabled", false);
+            $("#detailDiv").html(out);
+        });
+    },
+    renderInterfaces: function(id, data) {
+        dust.render('party.interfaces', data, function(err, out) {
+            $("#interfacesDiv").html(out);
+        });
+    }
+};
+
+$(function() {
+    $("#queryBtn").click(function() {
+        var jsonArray=$('#queryForm').serializeArray();
+        var str ="/party/index";
+        var addSign=true;
+        for (var i in jsonArray){
+            var pattern =/\[(.+?)\]/g;
+            var text=jsonArray[i].name.match(pattern);
+            var name=text.toString().replace(/[^a-z]/g,"");
+            var value=jsonArray[i].value;
+            if(jsonArray.length> 0 && i<jsonArray.length-1){
+                if(addSign){
+                    str+="?"+name+"="+value+"&";
+                    addSign=false;
+                }else{
+                    str+=name+"="+value+"&";
+                }
+            }else if(i==jsonArray.length-1){
+                str+=name+"="+value;
+            }else{
+                str+="?"+name+"="+value;
+            }
+        }
+        $("#tempA").attr("href",str);
+        $("#tempA").click();
+    });
+    $("#submitBtn").click(function() {
+        $("#partyForm").submit();
+    });
+    $("#addNewBtn").click(function() {
+        var formData = {};
+        dust.render('party.form', formData, function(err, out) {
+            $("#formDiv").html(out);
+            $("#partyForm").validate({
+                submitHandler: function(form) {
+                    $(":button").attr("disabled", "true");
+                    submitForm(form, '/party/new', function(data){
+                        $('.modal').modal('hide');
+                        $('.modal-backdrop').remove();
+                    });
+                },
+                focusCleanup: true
+            });
+        });
+    });
+    $("a[name='editBtn']").click(function() {
+        var formData = {};
+        var id = $(this).attr('value');
+        $.get("/party/" + id + "/info?" + new Date().getTime(), function(data, status, xhr) {
+            if (status === 'success') {
+                formData.item = data.item;
+                formData.editFlag = "true";
+                $('#myModalLabel').text('第三方详细信息');
+                formData.user = app.user;
+                dust.render('party.form', formData, function(err, out) {
+                    $("div.modal-body").html(out);
+                    $("#partyForm").validate({
+                        submitHandler: function(form) {
+                            $(":button").attr("disabled", "true");
+                            submitForm(form, '/party/' + id + '/save', function(data) {
+                                $('.modal').modal('hide');
+                                $('.modal-backdrop').remove();
+                            })
+                        },
+                        focusCleanup: true
+                    });
+                    $("#addModel").modal('show');
+                });
+                partyObj.renderDetail(id, formData);
+                partyObj.renderInterfaces(id, formData);
+            } else {
+                var some_html = '<br><div class="alert alert-danger fade in">';
+                some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                some_html += '</div>';
+                bootbox.alert(some_html);
+            }
+        });
+    });
+    $("a[name='deleteBtn']").click(function() {
+        var id = $(this).attr('value');
+        bootbox.confirm("删除该第三方后，该第三方下的所有信息也将一并删除，是否确定删除？", function(result) {
+            if (result) {
+                $.get("/party/" + id + "/delete?" + new Date().getTime(), function(data, status) {
+                    if (status === 'success') {
+                        var some_html = '<br><div class="alert alert-success fade in">';
+                        some_html += '<label>成功删除</label>';
+                        some_html += '</div>';
+                        var box = bootbox.alert(some_html);
+                        box.on('hidden.bs.modal', function(e) {
+                            renderCurrent();
+                        });
+                    } else {
+                        var some_html = '<br><div class="alert alert-danger fade in">';
+                        some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                        some_html += '</div>';
+                        bootbox.alert(some_html);
+                    }
+                });
+            }
+        });
+    });
+    var options = {
+        currentPage: {page},
+        bootstrapMajorVersion: 3,
+        totalPages: {pageCount},
+        pageUrl: function(type, page, current) {
+            return '/party/index?page=' + page;
+        },
+        itemContainerClass: function(type, page, current) {
+            return (page === current) ? "disabled" : "pointer-cursor";
+        },
+        itemTexts: function(type, page, current) {
+            switch (type) {
+                case "first":
+                    return "<<";
+                case "prev":
+                    return "<";
+                case "next":
+                    return ">";
+                case "last":
+                    return ">>";
+                case "page":
+                    return page;
+            }
+        }
+    };
+    $('.pagination').bootstrapPaginator(options);
+});
+
+</script>

@@ -1,0 +1,1 @@
+(function(){dust.register("area_book.classroom",body_0);function body_0(chk,ctx){return chk;}return body_0;})();

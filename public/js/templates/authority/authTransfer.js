@@ -1,0 +1,1 @@
+(function(){dust.register("authority.authTransfer",body_0);function body_0(chk,ctx){return chk.write("aaaaaaaaaaaaa1");}return body_0;})();

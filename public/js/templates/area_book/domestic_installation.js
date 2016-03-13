@@ -1,0 +1,1 @@
+(function(){dust.register("area_book.domestic_installation",body_0);function body_0(chk,ctx){return chk.write("ok");}return body_0;})();

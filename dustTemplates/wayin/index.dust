@@ -1,0 +1,115 @@
+<div style="width: 1000px; margin: 0 auto;">
+<div id="myCarousel" class="carousel slide">
+    <!-- 轮播（Carousel）指标 -->1
+    <ol class="carousel-indicators">
+       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel"  data-slide-to="1"></li>
+        <li data-target="#myCarousel"  data-slide-to="2"></li>
+    </ol>
+    <!-- 轮播（Carousel）项目 -->
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="/images/1.jpg" alt="First slide">
+            <div class="carousel-caption"></div>
+        </div>
+        <div class="item">
+            <img src="/images/2.jpg" alt="Second slide">
+            <div class="carousel-caption"></div>
+        </div>
+        <div class="item">
+            <img src="/images/3.jpg" alt="Third slide">
+            <div class="carousel-caption"></div>
+        </div>
+    </div>
+    <!-- 轮播（Carousel）导航 -->
+    <a class="carousel-control left" href="#myCarousel"
+       data-slide="prev">&lsaquo;</a>
+    <a class="carousel-control right" href="#myCarousel"
+       data-slide="next">&rsaquo;</a>
+</div>
+<div class="panel panel-primary">
+
+    <div class="panel-heading" style="background-color: #00A000">首页详情</div>
+            <table class="table" style="float: left; width: 400px;"  contenteditable="true">
+                <thead>
+                <tr><td>通知</td></tr>
+                {#news}
+                <tr><td><a  id="{._id}"  href="#" name="notice">{.title}</a></td></tr>
+                {/news}
+                </thead>
+                </table>
+            <table class="table" style="float: left; width: 380px;"  contenteditable="true">
+                <thead>
+                <tr><td>注意事项</td></tr>
+                {#notices}
+                <tr><td><a   id="{._id}"  href="#" name="notice">{.title}</a></td></tr>
+                {/notices}
+                </thead>
+                </table>
+            <table class="table" style="float: left; width: 400px;"  contenteditable="true">
+                <thead>
+                <tr><td>特殊场馆说明</td></tr>
+                {#specials}
+                <tr><td> <a href="/wayin/special?id={._id}">{.act_room}</a></td></tr>
+                {/specials}
+                </thead>
+                </table>
+
+    <div class="container-fluid">
+        <ul class="pagination"></ul>
+    </div>
+
+    <div class="modal fade" id="ViewDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-large">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-large">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="formDiv">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        $("a[name='notice']").click(function(){
+            var id = $(this).attr("id");
+            $.get("/wayin/" + id + "/info",function(data, status, xhr) {
+                var content=data.item.content;
+                var title=data.item.title;
+                alert(title);
+                $('#myModalLabel').text(title);
+                $('#formDiv').text(content);
+
+            });
+            $('#addModel').modal('show');
+        })
+
+
+
+
+
+    })
+//   $(function(){
+//       $("a[name='news']").click(function(){
+//           alert("你好");
+//       })
+//   })
+</script>

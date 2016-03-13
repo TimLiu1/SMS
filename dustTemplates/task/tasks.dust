@@ -1,0 +1,35 @@
+
+    <thead>
+         <tr>
+             <th class="col-sm-1">保单号</th>
+             <th class="col-sm-1">流水号</th>
+             <th class="col-sm-1">投保人</th>
+             <th class="col-sm-1">签单日期</th>
+             <th class="col-sm-1">产品方案代码</th>
+             <th class="col-sm-1">保费</th>
+             <th class="col-sm-1">同步状态</th>
+             <th class="col-sm-1">操作选项</th>
+         </tr>
+    </thead>
+    <tbody>
+        {#items}
+            <tr>
+                <td>{.policyNo}</td>
+                <td>{.waterNo}</td>
+                <td>{.appDataDto.applicantName}</td>
+                <td>{.issuedDate}</td>
+                <td>{.rationType}</td>
+                <td>{.sumPremium}</td>
+                <td>{@baseCode code="{taskStatus}" base="taskStatus"/}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                         {@if cond="('{.taskStatus}'!= 'S')"}
+                            <a class="btn btn-default" data-toggle="tooltip"  value="{.policyNo}" data-placement="left" name="uploadBtn" title="立刻上传" href="#"><i class="icon-upload icon-large"></i></a>
+                         {/if}
+                    </div>
+                </td>
+            </tr>
+        {/items}
+    </tbody>
+
+

@@ -1,0 +1,54 @@
+<table class="table table-hover table-condensed table-striped text-left">
+    <thead>
+        <tr>
+            <th class="col-sm-3">名称</th>
+            <th class="col-sm-2">代码</th>
+            <th class="col-sm-2">类别</th>
+            <th class="col-sm-2">提供方</th>
+            <th class="col-sm-2">相对路径</th>
+            <th class="col-sm-1">操作选项</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#item.interfaces}
+        <tr>
+            <td>{.name}</td>
+            <td>{.code}</td>
+            <td>{@baseCode code="{.category}" base="interfaceCategory"/}</td>
+            <td>{@baseCode code="{.provider}" base="interfaceProvider"/}</td>
+            <td>{.path}</td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    {@security allowed="ROLE_ADMIN" roles="{user.roles}"}<a class="btn btn-default" href="#" value="{._id}" data-toggle="tooltip" data-placement="top" name="deleteBtn" title="删除"><i class="icon-remove icon-large"></i></a>{/security}
+                </div>
+            </td>
+        </tr>
+        {/item.interfaces}
+    </tbody>
+</table>
+<script type="text/javascript">
+$(function() {
+    $('[name="deleteBtn"]').click(function(event) {
+        var id = $('#hiddenPartyID').val();
+        var inter = $(this).attr('value');
+        bootbox.confirm("确认不再分配该接口？", function(result) {
+            if (result) {
+                $.get("/party/" + id + "/deleteInterface/" + inter + "?" + new Date().getTime(), function(data, status) {
+                    if (status === 'success') {
+                        if (data.err) {
+                            return app.showError(data.err);
+                        }
+                        app.showSucess(data.message, function() {
+                            data.user = app.user;
+                            partyObj.renderInterfaces(id, data);
+                        });
+                    } else {
+                        app.showError(xhr.statusText);
+                    }
+                });
+            }
+        });
+    });
+});
+
+</script>

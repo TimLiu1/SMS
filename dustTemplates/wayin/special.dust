@@ -1,0 +1,31 @@
+<div style="width: 1200px; margin: 0 auto;">
+
+
+
+    <div class="col-sm-12"  style="margin-top:15px;">
+        <div style=" margin-top: 50px; margin-left: 500px "><h2><strong>{items.act_room}</strong></h2></div>
+    </div>
+    <div id="myCarousel" class="carousel slide">
+        <div class="carousel-inner">
+            <div class="item active">
+                <img src= {items.image} alt="First slide">
+                <div class="carousel-caption"></div>
+            </div>
+        </div>
+    </div>
+   <div class="panel panel-primary">
+       <div class="col-sm-12"  style="margin-top:15px;">
+           <div  style="font-size:18px;"><strong>简介：</strong></div>
+           <div> &nbsp;&nbsp;&nbsp;&nbsp; {items.intro}
+           </div>
+       </div>
+       <div class="col-sm-12"  style="margin-top:15px;">
+           <div style="font-size:18px;"><strong>适合活动类型：</strong></div>
+           <div> &nbsp;&nbsp;&nbsp;&nbsp;{items.type}</div>
+       </div>
+       <div class="col-sm-12" style="margin-top:15px;">
+           <div  style="font-size:18px;"><strong>场地配备：</strong></div>
+           <div>&nbsp;&nbsp;&nbsp;&nbsp;{items.equ}</div>
+       </div>
+   </div>
+</div>

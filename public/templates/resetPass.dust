@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<!-- Meta, title, CSS, favicons, etc. -->
+<title>{+title}外部接入平台管理系统{/title}</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="tianan - 外部接入平台管理系统">
+<meta name="author" content="tianan">
+
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-2 col-sm-2">
+            <br><br><br><br><br><br><br><br>
+        </div>
+    </div>
+    <div class="well">
+        <div class="row" >
+            <div class="col-sm-4">
+                <img src="/images/mh_logo.png" alt="logo" class="img-rounded">
+            </div>
+            <div class="">
+                <h3>重置密码</h3>
+            </div>
+        </div>
+    <div class="row">
+        <div>
+            <br>
+        </div>
+    </div>
+        <div class="row" >
+            {?message}
+            <div class="alert alert-danger fade in">
+                <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>{message}</strong>
+            </div>
+            {/message}
+            <div class="">
+                <form class="form-horizontal" id="userform" method="post" role="form">
+                    <div id="passwdFiled" class="form-group">
+                        <label for="password" class="col-sm-offset-2 col-sm-2 control-label">新密码</label>
+                        <div class="col-sm-4">
+                            <input id="password1" type="password" name="password1" value="{password1}" class="form-control">
+                        </div>
+                    </div>
+                    <div id="passwdFiled" class="form-group">
+                        <label for="password" class="col-sm-offset-2 col-sm-2 control-label">重录新密码</label>
+                        <div class="col-sm-4">
+                            <input id="password2" type="password" name="password2" value="{password2}" class="form-control">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-1">
+                            <input id="submitbtn" type="submit" value="提交" class="btn btn-primary">
+                        </div>
+                        <div class="col-sm-1">
+                            <!-- <a href="/system/auth/users/signup" role="button" class="btn btn-info">注册 </a> -->
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf" value="{_csrf}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="/js/jquery-1.10.2.min.js"></script>
+<![endif]-->
+<!--[if lte IE 9]>
+<script src="/js/placeholders.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="/js/app.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $(document).keyup(function(event){
+        if(event.keyCode ==13){
+            $("#submitbtn").trigger("click");
+        }
+    });
+    $("#submitbtn").click(function(event){
+
+        var password1 = $("#password").val();
+        var password2 = $("#confirmpd").val();
+        var captcha = $("#captcha").val();
+
+        if (password1 == '') {
+            alert('密码必须输入！');
+            $("#passwdFiled").addClass('has-error');
+            return false;
+        } if (password2 == '') {
+            alert('确认密码必须输入！');
+            $("#passwdFiled").addClass('has-error');
+            return false;
+        } if (password1 != password2) {
+            alert('两次密码输入不一致！');
+            $("#password2").addClass('has-error');
+            return false;
+        } else {
+            $("#password1").removeClass('has-error');
+            $("#password2").removeClass('has-error');
+        }
+        $("#userform").submit();
+        event.preventDefault();
+    });
+
+
+});
+</script>
+</body>
+</html>

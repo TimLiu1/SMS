@@ -1,0 +1,86 @@
+{
+    "loggerLevel": "debug",
+    "express": {
+        "view cache": false,
+        "view engine": "dust",
+        "views": "path:./public/templates"
+    },
+    "databaseConfig": {
+        "host": "10.100.133.179",
+        "database": "IPDB"
+    },
+    "cacheConfig": {
+        "port": 6379,
+        "host": "localhost",
+        "options": {}
+    },
+    "restUrl":{
+        "rest":"http://10.100.135.179:18881"
+    },
+    "cronConfig": {
+        "cron_syncpolicy":   "00 */2 * * * *",
+        "cron_cancelpolicy": "00 */30 * * * *"
+    },
+    "view engines": {
+        "dust": {
+            "module": "engine-munger",
+            "renderer": {
+                "method": "dust",
+                "arguments": [
+                    { "cache": false },
+                    {
+                        "views": "config:express.views",
+                        "view engine": "config:express.view engine",
+                        "specialization": "config:specialization",
+                        "i18n": "config:i18n"
+                    }
+                ]
+            }
+        }
+    },
+
+    "middleware": {
+
+        "devtools": {
+            "enabled": true,
+            "priority": 35,
+            "module": {
+                "name": "kraken-devtools",
+                "arguments": [
+                    "path:./public",
+                    "path:./.build",
+                    {
+                        "template": {
+                            "module": "kraken-devtools/plugins/dustjs",
+                            "files": "/templates/**/*.js",
+                            "base": "templates",
+                            "i18n": "config:i18n"
+                        },
+                        "copier": {
+                            "module": "kraken-devtools/plugins/copier",
+                            "files": "**/*"
+                        }
+                    }
+                ]
+            }
+        },
+        "session": {
+            "enabled": true,
+            "priority": 100,
+            "module": {
+                "name": "path:./lib/middlewear/redis-session",
+                "arguments": [{
+                    "secret": "fslfjlglaj1217843782743",
+                    "key": "ipsid",
+                    "resave": true,
+                    "saveUninitialized": true,
+                    "proxy": null
+                }, {
+                    "host": "10.100.133.44",
+                    "port": 6379,
+                    "db": 2
+                }]
+            }
+        }
+    }
+}

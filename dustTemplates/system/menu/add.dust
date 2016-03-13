@@ -1,0 +1,20 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">{title}</div>
+  <div class="panel-body">
+		{>"system.menu._form" addTop="true"/}
+	</div>
+</div>
+<script type="text/javascript">
+$(function() {
+	$("#returnButton").attr("href", "/system/menus");
+	$("#addMenuForm").validate({
+		submitHandler:function(form){
+			$(":button").attr("disabled","true");
+            submitForm(form, '/system/menus/add');
+        },
+        focusCleanup:true
+	});
+	changeADefault();
+});
+
+</script>

@@ -1,0 +1,135 @@
+{
+    "port": 8080,
+    "loggerLevel": "info",
+    "express": {
+        "view cache": false,
+        "view engine": "js",
+        "views": "path:./.build/templates"
+    },
+    "cacheConfig": {
+        "port": 6379,
+        "host": "localhost",
+        "options": {}
+    },
+    "databaseConfig": {
+        "host": "localhost",
+        "database": "AIPDB"
+    },
+    "restUrl":{
+        "rest":"http://192.168.50.60"
+    },
+    "cronConfig": {
+        "cron_syncpolicy":   "00 */1 * * * *",
+        "cron_cancelpolicy": "00 */30 * * * *"
+    },
+    "view engines": {
+        "js": {
+            "module": "engine-munger",
+            "renderer": {
+                "method": "js",
+                "arguments": [{
+                    "cache": true
+                }, {
+                    "views": "config:express.views",
+                    "view engine": "config:express.view engine",
+                    "specialization": "config:specialization",
+                    "i18n": "config:i18n"
+                }]
+            }
+        }
+    },
+
+    "i18n": {
+        "contentPath": "path:./locales",
+        "fallback": "en-US"
+    },
+
+    "middleware": {
+
+        "static": {
+            "module": {
+                "arguments": ["path:./.build"]
+            }
+        },
+        "logger": {
+            "enabled": true,
+            "priority": 50,
+            "module": {
+                "name": "path:./lib/middlewear/accessLogger",
+                "arguments": ["combined"]
+            }
+        },
+        "session": {
+            "enabled": true,
+            "priority": 100,
+            "module": {
+                "name": "path:./lib/middlewear/redis-session",
+                "arguments": [{
+                    "secret": "fslfjlglaj1217843782743",
+                    "key": "ipsid",
+                    "resave": true,
+                    "saveUninitialized": true,
+                    "proxy": null
+                }, {
+                    "host": "localhost",
+                    "port": 6379,
+                    "db": 2
+                }]
+            }
+        },
+        "appsec": {
+            "enabled": true,
+            "priority": 110,
+            "module": {
+                "name": "lusca",
+                "arguments": [{
+                    "csrf": false,
+                    "xframe": "SAMEORIGIN",
+                    "p3p": false,
+                    "csp": false
+                }]
+            }
+        },
+        "router": {
+            "module": {
+                "arguments": [{
+                    "directory": "path:./controllers"
+                }]
+            }
+        },
+        "expressView": {
+            "priority": 100,
+            "enabled": true,
+            "module": {
+                "name": "engine-munger/lib/expressView"
+            }
+        },
+
+        "fileNotFound": {
+            "enabled": true,
+            "priority": 130,
+            "module": {
+                "name": "kraken-js/middleware/404",
+                "arguments": ["errors/404"]
+            }
+        },
+
+        "serverError": {
+            "enabled": true,
+            "priority": 140,
+            "module": {
+                "name": "kraken-js/middleware/500",
+                "arguments": ["errors/500"]
+            }
+        },
+
+        "flash": {
+            "priority": 91,
+            "enabled": true,
+            "module": {
+                "name": "connect-flash",
+                "method": "flash"
+            }
+        }
+    }
+}

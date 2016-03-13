@@ -1,0 +1,46 @@
+<form class="form-horizontal"  method="post" id="interfaceForm"   role="form">
+    <div class="form-group">
+        <label for="interfaceName"  class="col-sm-1 control-label">接口名称<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            <input type="text" class="form-control" id="interfaceName" name="interface[name]" value="{item.name}" required >
+        </div>
+        <label for="interfaceCode"  class="col-sm-1 control-label">接口代码<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            <input type="text" class="form-control" id="interfaceCode" name="interface[code]" value="{item.code}" required >
+        </div>
+        <label for="interfaceCategory"  class="col-sm-1 control-label">所属类别<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            {@baseCode id="interfaceCategory" class="form-control" name="interface[category]" base="interfaceCategory" selectValue="{item.category}" blank="true"  required="true" /}
+        </div>
+        <label for="interfaceProvider"  class="col-sm-1 control-label">服务提供方<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            {@baseCode id="interfaceProvider" class="form-control" name="interface[provider]" base="interfaceProvider" selectValue="{item.provider}" blank="true" required="true" /}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="interfacePath"  class="col-sm-1 control-label">相对路径<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            <input type="text"  class="form-control" id="interfacePath" name="interface[path]" value="{item.path}" required >
+        </div>
+        <label for="interfaceStatus" class="col-sm-1 control-label">状态<span class="required-indicator">*</span></label>
+        <div class="col-sm-2">
+            {?interface.status}
+                {@baseCode id="interfaceStatus" class="form-control" selectValue="{item.status}" name="interface[status]" base="interfaceStatus" required="true" /}
+                {:else}
+                {@baseCode id="interfaceStatus" class="form-control" selectValue="0" name="interface[status]" base="interfaceStatus" required="true" /}
+            {/interface.status}
+        </div>
+        <label for="interfaceDescript"  class="col-sm-1 control-label">描述<span class="required-indicator">*</span></label>
+        <div class="col-sm-5">
+            <textarea rows="3" name="interface[descript]" class="form-control" required id="interfaceDescript">
+                {item.descript}
+            </textarea>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+$(function() {
+
+
+});
+</script>

@@ -1,0 +1,21 @@
+
+<div class="panel panel-primary">
+  <div class="panel-heading">{title}</div>
+  <div class="panel-body">
+		{>"system.menu._form"/}
+	</div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+	$("#returnButton").attr("href", "/system/menus/return?id={parent._id}");
+	$("#addMenuForm").validate({
+		submitHandler:function(form){
+			$(":button").attr("disabled","true");
+            submitForm(form, '/system/menus/{parent._id}/addSubMenu');
+        },
+        focusCleanup:true
+	});
+});
+
+</script>

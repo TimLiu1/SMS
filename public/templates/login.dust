@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<!-- Meta, title, CSS, favicons, etc. -->
+<title>{+title}校园设施预定系统{/title}</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="tianan - 外部接入平台管理系统">
+<meta name="author" content="tianan">
+
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-offset-2 col-sm-2">
+            <br><br><br><br><br><br><br><br>
+        </div>
+    </div>
+    <div class="well">
+        <div class="row" >
+            <div class="col-sm-4">
+            </div>
+            <div class="">
+                <h3 style="margin-left: 330px">欢迎访问校园设施预订系统</h3>
+            </div>
+        </div>
+    <div class="row">
+        <div>
+            <br>
+        </div>
+    </div>
+        <div class="row" >
+            {?message}
+            <div class="alert alert-danger fade in">
+                <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>{message}</strong>
+            </div>
+            {/message}
+            <div class="">
+                <form class="form-horizontal" id="userform" method="post" role="form">
+                    <div class="form-group" id="nameFiled">
+                        <label class="col-sm-offset-2 col-sm-2 control-label" for="username">用户名</label>
+                        <div class="col-sm-4">
+                                <input id="username" type="text" name="username" value="{username}" class="form-control">
+                        </div>
+                    </div>
+                    <div id="passwdFiled" class="form-group">
+                        <label for="password" class="col-sm-offset-2 col-sm-2 control-label">密码</label>
+                        <div class="col-sm-4">
+                            <input id="password" type="password" name="password" value="{password}" class="form-control">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-1">
+                            <input id="submitbtn" type="submit" value="登陆" class="btn btn-primary">
+                        </div>
+                        <div class="col-sm-1">
+                            <!-- <a href="/system/auth/users/signup" role="button" class="btn btn-info">注册 </a> -->
+                        </div>
+                    </div>
+                    <input type="hidden" name="_csrf" value="{_csrf}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="/js/jquery-1.10.2.min.js"></script>
+<![endif]-->
+<!--[if lte IE 9]>
+<script src="/js/placeholders.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="/js/app.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $(document).keyup(function(event){
+        if(event.keyCode ==13){
+            $("#submitbtn").trigger("click");
+        }
+    });
+    $("#submitbtn").click(function(event){
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var password2 = $("#confirmpd").val();
+        var captcha = $("#captcha").val();
+        if (username == '') {
+           alert('用户名必须录入！');
+           $("#nameFiled").addClass('has-error');
+           return false;
+        } else {
+            $("#nameFiled").removeClass('has-error');
+        }
+        if (password == '') {
+            alert('密码必须输入！');
+            $("#passwdFiled").addClass('has-error');
+            return false;
+        } if (captcha === '') {
+            alert('校验码必须输入！');
+            $("#captcha").addClass('has-error');
+            return false;
+        } else {
+            $("#passwdFiled").removeClass('has-error');
+        }
+        $("#userform").submit();
+        event.preventDefault();
+    });
+
+
+});
+</script>
+</body>
+</html>

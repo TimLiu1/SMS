@@ -1,0 +1,40 @@
+<form class="form-horizontal"  method="post" id="partyForm"    role="form">
+    <div class="form-group">
+        <label class="col-sm-1 control-label" >校区</label>
+        <div class="col-sm-3">
+            <input id="campus" name="activity[campus]"  class="form-control "  name="party[effectiveStartDate]"   type="text" value='{item.campus}' readonly>
+        </div>
+        <label class="col-sm-1 control-label">预定时间</label>
+        <div class="col-sm-3">
+            <input id="start" class="form-control "    type="text" value='下一个星期' readonly >
+        </div>
+        <label class="col-sm-1 control-label">类型</label>
+        <div class="col-sm-3">
+            <input type="text"  name="activity[act_type]"  class="form-control" value="{item.act_type}" id="class" readonly />
+        </div>
+        <div class="col-sm-3" hidden = "true">
+            <input type="text"  name="activity[status]" hidden ="true"  class="form-control" value="{item.status}" id="status" readonly  />
+        </div>
+    </div>
+    <div class="form-group">
+
+
+
+        <label class="col-sm-1 control-label">简介</label>
+        <div class="col-sm-3">
+            <input type="text"  name="activity[brief]"  class="form-control" value="{item.brief}" id="brief" readonly  />
+        </div>
+        <label class="col-sm-1 control-label">地点</label>
+        <div class="col-sm-3">
+            <input type="text"  name="activity[act_room]"  class="form-control" value="{item.act_room}" id="act_room" readonly  />
+        </div>
+
+
+    </div>
+    <div class="form-group">
+        <label class="col-sm-1 control-label">申请理由</label>
+        <div class="col-sm-9">
+            <input type="text"  name="activity[reason]"  class="form-control" value="{item.reason}" id="reason" />
+        </div>
+    </div>
+</form>

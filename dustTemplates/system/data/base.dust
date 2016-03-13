@@ -1,0 +1,175 @@
+<div class="panel-group" id="mainContent">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group">
+                <a class="btn btn-info" data-toggle="collapse" data-parent="#mainContent" href="#condition">数据类型</a>
+                <a class="btn btn-default" id="addBaseDataType" href="#" data-toggle="modal" data-target="#addModel">新增数据类型</a>
+                <a class="btn btn-default" id="refresh" href="#">刷新缓存</a>
+            </div>
+        </div>
+
+        <div id="condition" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <form class="form-inline" role="form" id="queryForm" method="get">
+                    <input type="hidden" id="selectedBaseDataType">
+                    <div class="form-group">
+                        <label class="sr-only" for="qname">数据类型</label>
+                        <div id="baseDataTypeDiv">
+                            {@baseCode id="baseDataType" selectValue="{baseDataType}" class="selectpicker"  name="baseDataType" base="baseDataType" blank="true" required="true"/}
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" id="selBaseDataTypeBtn" class="btn btn-default">确定</button>
+                        <button type="button" id="delBaseDataTypeBtn" class="btn btn-default">删除选中数据类型</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="baseInfoContainer">
+
+</div>
+<div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新增数据</h4>
+            </div>
+            <div class="modal-body">
+                <form  method="post" id="baseDataTypeForm"  role="form">
+                    <div class="form-group">
+                        <label for="baseDataTypeValue" class="control-label">数据类型<span class="required-indicator">*</span></label>
+                        <input type="text" name="baseDataType[value]" class="form-control" id="baseDataTypeValue" value="{baseDataType.value}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="baseDataTypeKey" class="control-label">英文缩写<span class="required-indicator">*</span></label>
+                        <input type="text" name="baseDataType[key]" class="form-control" id="baseDataTypeKey" value="{baseDataType.key}" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="submitBtn" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+var baseInfo = {
+    renderBaseInfoView: function(data) {
+        if (!data) {
+            return $("#baseInfoContainer").html('');
+        }
+        dust.render('system.data.baseInfo', data, function(err, out) {
+            if (err) {
+                return alert(err);
+            }
+            $("#baseInfoContainer").html(out);
+        });
+    },
+    renderBaseInfos: function(datas) {
+        var select = $('<select id="baseInfos" class="selectpicker"  title="该数据类型下的基本信息"><option></option></select>');
+        for (var i = 0, l = datas.length; i < l; i++) {
+            select.append('<option value="' + datas[i].code + '">' + datas[i].code + ' ' + datas[i].name + '</option>')
+        }
+        $("#baseInfoDiv").html(select);
+        $("div#baseInfoDiv .selectpicker").selectpicker({
+            style: 'btn-success'
+        });
+    },
+    renderBaseInfoValues: function(datas) {
+        dust.render('system.data.baseInfoList', datas, function(err, out) {
+            if (err) {
+                return alert(err);
+            }
+            $("#baseInfoListDiv").html(out);
+        });
+    }
+};
+
+$(function() {
+    $("#baseDataTypeForm").validate({
+        submitHandler: function(form) {
+            submitForm(form, '/system/data/baseDataType/new', function(data) {
+                $('.modal').modal('hide');
+                $('.modal-backdrop').remove();
+                $('#refresh').trigger('click');
+            });
+
+        },
+        focusCleanup: true
+    });
+    $("#submitBtn").click(function(event) {
+        $("#baseDataTypeForm").submit();
+    });
+    $("#refresh").click(function(event) {
+        baseCode.getBaseData(function() {
+            renderCurrent();
+            var some_html = '<br><div class="alert alert-success fade in">';
+            some_html += '<label>刷新成功</label>';
+            some_html += '</div>';
+            var box = bootbox.alert(some_html);
+        });
+    });
+    $("#delBaseDataTypeBtn").click(function(event) {
+        var value = $("#baseDataType").val();
+        var text = $('#baseDataType option:selected').html();
+        if (value) {
+            bootbox.confirm("删除" + text + "数据类型后，该数据类型下的所有基础信息也将一并删除，是否确定删除？", function(result) {
+                if (result) {
+                    $.get("/system/data/baseDataType/" + value + "/delete?" + new Date().getTime(), function(data, status) {
+                        if (status === 'success') {
+                            var some_html = '<br><div class="alert alert-success fade in">';
+                            some_html += '<label>成功删除</label>';
+                            some_html += '</div>';
+                            var box = bootbox.alert(some_html);
+                            box.on('hidden.bs.modal', function(e) {
+                                $('#refresh').trigger('click');
+                            });
+                        } else {
+                            var some_html = '<br><div class="alert alert-danger fade in">';
+                            some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                            some_html += '</div>';
+                            bootbox.alert(some_html);
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    $("#selBaseDataTypeBtn").click(function(event) {
+        var formData = {};
+
+        var baseDataType = $("#baseDataType").val();
+
+        $("#selectedBaseDataType").val(baseDataType);
+
+        formData.baseDataType = baseDataType;
+        if (baseDataType) {
+            $.get("/system/data/baseInfo/baseDataType/" + baseDataType + "?" + new Date().getTime(), function(data, status) {
+                if (status === 'success') {
+                    baseInfo.renderBaseInfoView(formData);
+                    var baseInfos = data.baseInfos;
+                    baseInfo.renderBaseInfos(baseInfos);
+
+                } else {
+                    var some_html = '<br><div class="alert alert-danger fade in">';
+                    some_html += '<label>调用后台出错：' + xhr.statusText + '</label>';
+                    some_html += '</div>';
+                    bootbox.alert(some_html);
+                }
+            });
+        }
+    });
+    $("#baseDataType").change(function(event) {
+        baseInfo.renderBaseInfoView(false);
+        return false;
+    });
+});
+
+</script>
